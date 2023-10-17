@@ -286,6 +286,7 @@ public:
 
 	class idPlayerView		playerView;			// handles damage kicks and effects
 
+	bool					inMinigame;
 	bool					alreadyDidTeamAnnouncerSound;
 	bool					noclip;
 	bool					godmode;
@@ -303,6 +304,8 @@ public:
 
 	int						lastHitTime;			// last time projectile fired by player hit target
 	int						lastSavingThrowTime;	// for the "free miss" effect
+
+	int						finishtime;
 
 	struct playerFlags_s {
 		bool		forward			:1;
@@ -433,6 +436,8 @@ public:
 
 	void					Spawn( void );
 	void					Think( void );
+
+	void					BakingMinigame(int starttime);
 
 	// save games
 	void					Save( idSaveGame *savefile ) const;					// archives object for save game file

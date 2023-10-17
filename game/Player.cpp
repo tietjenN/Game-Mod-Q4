@@ -1086,6 +1086,7 @@ idPlayer::idPlayer() {
 	godmode					= false;
 	undying					= g_forceUndying.GetBool() ? !gameLocal.isMultiplayer : false;
 
+	inMinigame				= false;
 	spawnAnglesSet			= false;
 	spawnAngles				= ang_zero;
 	viewAngles				= ang_zero;
@@ -9303,6 +9304,7 @@ void idPlayer::Think( void ) {
 	if ( !gameLocal.usercmds ) {
 		return;
 	}
+	//gameLocal.Printf(" %s: %i: GOT HERE", __FILE__, __LINE__);
 
 #ifdef _XENON
 	// change the crosshair if it's modified
@@ -9467,6 +9469,7 @@ void idPlayer::Think( void ) {
 		acc->time = gameLocal.time;
 		acc->dir[0] = usercmd.forwardmove - oldCmd.forwardmove;
 		acc->dir[1] = acc->dir[2] = 0;
+
 	}
 
 	if ( usercmd.rightmove != oldCmd.rightmove ) {
@@ -9643,6 +9646,69 @@ void idPlayer::Think( void ) {
 		inBuyZone = false;
 
 	inBuyZonePrev = false;
+
+	idVec3    start;
+	idVec3    end;
+	trace_t    tr;
+	start = GetEyePosition();
+	end = start + viewAngles.ToForward() * 768.0f;
+	gameLocal.TracePoint(this, tr, start, end, MASK_SHOT_BOUNDINGBOX, this);
+	idEntity* thing = gameLocal.entities[tr.c.entityNum];
+	int thingnum = tr.c.entityNum;
+	//gameLocal.Printf("item: %d, ", tr.c.entityNum);
+	idUserInterface* hud_ = gameLocal.GetLocalPlayer()->GetHud();
+	if ((thingnum == 33) && (usercmd.buttons & BUTTON_ATTACK)) {
+		//gameLocal.Printf("detected \n");
+		//gameLocal.Printf("time: %i", gameLocal.GetTime());
+		thing->SetModel("models / mapobjects / strogg / convoy/mine.lwo");
+	}
+	const char* pizza = "func_static_53712";
+	const char* ovenControl = "func_static_14470";
+	const char* ovenDoor = "func_static_17544";
+	idVec3 oven;
+	oven.x = -1264.000000;
+	oven.y = -1184.000000;
+	oven.z = 104.000000;
+	idAngles angle;
+	if ((strcmp(thing->GetName(), ovenDoor) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+		//thing->Teleport(oven, angle, NULL);
+		if (!inMinigame) {
+			BakingMinigame(gameLocal.GetTime()); 
+			finishtime = gameLocal.time + 2500;
+		}
+		//thing->GetPhysicsToVisualTransform(idVec3 & origin, idMat3 & axis);
+	}
+	if (inMinigame) {
+		if (gameLocal.GetLocalPlayer()->inventory.armor == 120) {
+			inMinigame = false;
+		}
+		if (gameLocal.time > finishtime) {
+			gameLocal.GetLocalPlayer()->inventory.armor += 10;
+			finishtime = gameLocal.time + 2500;
+		}
+		if ((strcmp(thing->GetName(), ovenControl) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+			inMinigame = false;
+		}
+	}
+
+	cursor->HandleNamedEvent("showCrossGui");
+	if (strcmp(thing->GetName(), ovenControl) == 0) {
+		cursor->HandleNamedEvent("showCrossUsable");
+	}
+	if (strcmp(thing->GetName(), ovenDoor) == 0) {
+		cursor->HandleNamedEvent("showCrossUsable");
+	}
+	//gameLocal.Warning( "Light at (%f,%f,%f) has bad target info\n",renderLight->origin[0], renderLight->origin[1], renderLight->origin[2] );
+	//gameLocal.Printf(thing->GetName()); //can be "classname"
+	//gameLocal.Printf("\n");
+
+
+}
+
+void idPlayer::BakingMinigame(int starttime) {
+		gameLocal.Printf("started minigame \n");
+		gameLocal.GetLocalPlayer()->inventory.armor = 10;
+		inMinigame = true;
 }
 
 /*
