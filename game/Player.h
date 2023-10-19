@@ -286,7 +286,11 @@ public:
 
 	class idPlayerView		playerView;			// handles damage kicks and effects
 
-	bool					inMinigame;
+	bool					inMinigame1;
+	bool					inMinigame2;
+	bool					inMinigame3;
+	int						clicks;
+	int						score;
 	bool					alreadyDidTeamAnnouncerSound;
 	bool					noclip;
 	bool					godmode;
@@ -437,6 +441,7 @@ public:
 	void					Spawn( void );
 	void					Think( void );
 
+	void					KneadingDoughGame(void);
 	void					BakingMinigame(int starttime);
 
 	// save games

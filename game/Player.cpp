@@ -1086,7 +1086,9 @@ idPlayer::idPlayer() {
 	godmode					= false;
 	undying					= g_forceUndying.GetBool() ? !gameLocal.isMultiplayer : false;
 
-	inMinigame				= false;
+	inMinigame1				= false;
+	inMinigame2				= false;
+	inMinigame3				= false;
 	spawnAnglesSet			= false;
 	spawnAngles				= ang_zero;
 	viewAngles				= ang_zero;
@@ -9657,58 +9659,92 @@ void idPlayer::Think( void ) {
 	int thingnum = tr.c.entityNum;
 	//gameLocal.Printf("item: %d, ", tr.c.entityNum);
 	idUserInterface* hud_ = gameLocal.GetLocalPlayer()->GetHud();
-	if ((thingnum == 33) && (usercmd.buttons & BUTTON_ATTACK)) {
+	//if ((thingnum == 33) && (usercmd.buttons & BUTTON_ATTACK)) {
 		//gameLocal.Printf("detected \n");
 		//gameLocal.Printf("time: %i", gameLocal.GetTime());
-		thing->SetModel("models / mapobjects / strogg / convoy/mine.lwo");
-	}
-	const char* pizza = "func_static_53712";
+		//thing->SetModel("models / mapobjects / strogg / convoy/mine.lwo");
+	//}
+	//const char* pizza = "func_static_53712";
 	const char* ovenControl = "func_static_14470";
 	const char* ovenDoor = "func_static_17544";
+	const char* dough = "moveable_gib_torso_pork_1";
 	idVec3 oven;
 	oven.x = -1264.000000;
 	oven.y = -1184.000000;
 	oven.z = 104.000000;
 	idAngles angle;
-	if ((strcmp(thing->GetName(), ovenDoor) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
-		//thing->Teleport(oven, angle, NULL);
-		if (!inMinigame) {
-			BakingMinigame(gameLocal.GetTime()); 
-			finishtime = gameLocal.time + 2500;
+
+	if ((strcmp(thing->GetName(), dough) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+		if (!inMinigame1) {
+			KneadingDoughGame();
+			finishtime = gameLocal.time + 2000;
 		}
-		//thing->GetPhysicsToVisualTransform(idVec3 & origin, idMat3 & axis);
 	}
-	if (inMinigame) {
-		if (gameLocal.GetLocalPlayer()->inventory.armor == 120) {
-			inMinigame = false;
+	if (inMinigame1) {
+		if (gameLocal.time >= finishtime) {
+			gameLocal.Printf("clicked %i times. \n", clicks);
+			inMinigame1 = false;
 		}
-		if (gameLocal.time > finishtime) {
-			gameLocal.GetLocalPlayer()->inventory.armor += 10;
-			finishtime = gameLocal.time + 2500;
-		}
-		if ((strcmp(thing->GetName(), ovenControl) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
-			inMinigame = false;
+		if ((strcmp(thing->GetName(), dough) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+			clicks++;
 		}
 	}
 
+	if ((strcmp(thing->GetName(), ovenDoor) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+		//thing->Teleport(oven, angle, NULL);
+		if (!inMinigame3) {
+			BakingMinigame(gameLocal.GetTime()); 
+			finishtime = gameLocal.time + 500;
+		}
+		//thing->GetPhysicsToVisualTransform(idVec3 & origin, idMat3 & axis);
+	}
+	if (inMinigame3) {
+		//minigame stops automatically at full armor bar
+		if (gameLocal.GetLocalPlayer()->inventory.armor == 125) {
+			inMinigame3 = false;
+			score = 0;
+		}
+		//move bar progress up
+		if (gameLocal.time > finishtime) {
+			gameLocal.GetLocalPlayer()->inventory.armor += 5;
+			finishtime = gameLocal.time + 200;
+		}
+		//ending minigame and scoring
+		if ((strcmp(thing->GetName(), ovenControl) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+			inMinigame3 = false;
+			if (gameLocal.GetLocalPlayer()->inventory.armor < 60 || gameLocal.GetLocalPlayer()->inventory.armor > 90) {
+				score = 40;
+			}
+			if (gameLocal.GetLocalPlayer()->inventory.armor > 60 && gameLocal.GetLocalPlayer()->inventory.armor < 90) {
+				score = 100;
+			}
+			gameLocal.Printf("Earned %i points! \n", score);
+			gameLocal.GetLocalPlayer()->inventory.armor = 0;
+		}
+	}
 	cursor->HandleNamedEvent("showCrossGui");
 	if (strcmp(thing->GetName(), ovenControl) == 0) {
 		cursor->HandleNamedEvent("showCrossUsable");
+		//cursor->SetStateString("npc", common->GetLocalizedString(newEnt->spawnArgs.GetString("npc_name", "Joe")));
+		//cursor->SetStateString("npcdesc", common->GetLocalizedString(newEnt->spawnArgs.GetString("npc_description", "")));
 	}
 	if (strcmp(thing->GetName(), ovenDoor) == 0) {
 		cursor->HandleNamedEvent("showCrossUsable");
 	}
-	//gameLocal.Warning( "Light at (%f,%f,%f) has bad target info\n",renderLight->origin[0], renderLight->origin[1], renderLight->origin[2] );
-	//gameLocal.Printf(thing->GetName()); //can be "classname"
-	//gameLocal.Printf("\n");
-
-
+	if (strcmp(thing->GetName(), dough) == 0) {
+		cursor->HandleNamedEvent("showCrossUsable");
+	}
+}
+void idPlayer::KneadingDoughGame(void) {
+	gameLocal.Printf("started minigame \n");
+	clicks = 0;
+	inMinigame1 = true;
 }
 
 void idPlayer::BakingMinigame(int starttime) {
 		gameLocal.Printf("started minigame \n");
 		gameLocal.GetLocalPlayer()->inventory.armor = 10;
-		inMinigame = true;
+		inMinigame3 = true;
 }
 
 /*
