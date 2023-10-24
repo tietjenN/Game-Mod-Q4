@@ -1,0 +1,11 @@
+windowDef Desktop
+{
+	rect	0,0,640,480
+	windowDef unnamed
+	{
+		rect	67,6,514,493
+		visible	1
+		background	"gfx/guis/cheese"
+		matcolor	1,1,1,1
+	}
+}

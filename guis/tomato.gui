@@ -1,0 +1,11 @@
+windowDef Desktop
+{
+	rect	0,0,640,480
+	windowDef tomato
+	{
+		rect	91,10,453,460
+		visible	1
+		background	"gfx/guis/tomato_sauce"
+		matcolor	1,1,1,1
+	}
+}

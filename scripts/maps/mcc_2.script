@@ -892,16 +892,7 @@ void postOp()
 	$dummyDrWells.remove();
 	$dummyDrAllyn.remove();
 
-	sys.trigger($DR_ALLYN2);
-	sys.trigger($DR_WELLS2);
-	sys.trigger($startSLEDGE2);
-
-	$medBed.show();
 	$func_door_218.lock(1);
-//	sys.println("The player wakes up.");
-	$mcc2_playerBed.lock(0);
-	$player1.exitVehicle(1);
-	sys.wait(1);
 	
 	// move the player to the medical room.
 	$player1.setWorldOrigin( $postOpStart.getWorldOrigin());
@@ -913,49 +904,12 @@ void postOp()
 
 	$mcc2_playerBed.hide();
 
-	$startSLEDGE2.lookAt( $player1 );
-	thread sledge2med();
-	sys.waitFrame();	
-	aiSpeakWait( $startSLEDGE2, "lipsync_1" );	
+	//thread hallwayPA2();
 
-	$startSLEDGE2.lookAt( $DR_WELLS2 );	
-	$DR_WELLS2.lookAt( $player1 );	
-	aiSpeakWait( $DR_WELLS2, "lipsync_1" );	
-	
-	// random guy walks by.
-	sys.trigger($redShirts);	
-
-	$startSLEDGE2.lookAt( $player1 );
-	aiSpeakWait( $startSLEDGE2, "lipsync_2" );	
-
-	$startSLEDGE2.lookAt( $DR_ALLYN2 );	
-	thread allynTalk();
-	aiSpeakWait( $DR_ALLYN2, "lipsync_1" );	
-
-	aiScriptedAnim( $startSLEDGE2, "weaponless_idle3_end", 8, 1 );
-	aiSpeak( $startSLEDGE2, "lipsync_3" );	
-	sys.wait(2);
-	$startSLEDGE2.lookAt( $player1 );
-	sys.wait(1);
-	$startSLEDGE2.lookAt( $null_entity);
-
-	thread hallwayPA2();
-
-	aiScriptedStop($DR_WELLS2);
-	$DR_WELLS2.setTalkState(TALK_OK);
-//	$DR_ALLYN2.setTalkState(TALK_OK);
-
-	$startSLEDGE2.lookAt( $null_entity);		
-	$startSLEDGE2.setLeader($player1);
-	$startSLEDGE2.setTalkState(TALK_OK);	
-	aiScriptedStop($startSLEDGE2);
-	
-	aiSpeakDone( $startSLEDGE2 );	
-	
 	sys.trigger($item_objective_4);
 	$func_door_218.lock(0);
 	
-	thread briefingReminder();
+	//thread briefingReminder();
 }
 void spawnDummyWells()
 {
@@ -995,58 +949,19 @@ void dummyMarine()
 }
 void thirdFade()
 {	
-	sys.killthread( "map_mcc_2::dummyHarperMoves");
 	$dummyHarper.remove();
 	sys.trigger($light_8197);
 	thread postOp();	
-/*
-	aiScriptedAnimLoop( $dummyDrAllyn, "operating_loopable_3", 0 );
-	aiScriptedAnimLoop( $dummyDrWells, "deepthought_bentover_1_slow", 0 );
-	sys.fadeOut( '1 1 1', 0);
-	sys.wait(.5);
-	sys.fadeIn( '1 1 1', 2);	
-	aiSpeakWait( $dummyDrAllyn, "lipsync_3" );	
-	aiSpeakWait( $dummyDrWells, "lipsync_3" );	
-	sys.fadeOut( '0 0 0', 2);
-	sys.wait(2);
-*/
 }
 void secondFade()
 {
 	$dummyMarine1.remove();
 	$dummyMarine2.remove();
-
-	thread dummyHarperMoves();
-	aiSpeak( $dummyDrAllyn, "lipsync_2" );	
-	sys.fadeOut( '1 1 1', 0);
-	sys.wait(.5);
-	sys.fadeIn( '1 1 1', 2);	
-	sys.wait(3);
-	aiSpeakDone( $dummyDrAllyn );	
-	aiSpeak( $dummyDrWells, "lipsync_2" );		
-	sys.wait(3);
-	sys.fadeOut( '0 0 0', 1);	
-	aiSpeakDone( $dummyDrWells );	
-	sys.wait(2);
 	thread thirdFade();
 }
 void firstFade()
 {
-	sys.fadeOut( '1 1 1', 0);
-	// mekberg: manually disable the objectives since this scene doesn't use a cinematic camera to do so
-	$player1.disableObjectives();
 	$medBed.hide();
-	$player1.enterVehicle($mcc2_playerBed);
-	sys.wait(1);
-	aiSpeak( $dummyDrAllyn, "lipsync_1" );	
-	sys.wait(.5);
-	sys.fadeIn( '1 1 1', 2);	
-	aiSpeakDone( $dummyDrAllyn );	
-	aiSpeak( $dummyDrWells, "lipsync_1" );	
-	sys.wait(1);
-	sys.fadeOut( '0 0 0', 1);	
-	aiSpeakDone( $dummyDrWells );	
-	sys.wait(2);
 	thread secondFade();
 }
 void bennette2React()
@@ -2113,7 +2028,11 @@ void lowerPod()
 	sys.trigger($exitAlertTrig2);
 
 }
-
+void order_taken(){
+	//$char_marine_unarmed_1.setMoveSpeed ( AIMOVESPEED_WALK );	
+	//aiScriptedMove( $char_marine_unarmed_1, $customer_wait, 0, 1 );
+	sys.println("ordered");
+}
 ////////////////////////////////
 //
 //	MCC_2 END		mrenner
@@ -2123,11 +2042,6 @@ void lowerPod()
 void main()
 {
 //	sys.println("Start MCC_2");
-	
-	$mcc2_playerBed.lock(1);
-	
-	// Hide the hud.
-	sys.sendNamedEvent( GUI_PLAYERHUD, "hideHud" );
 
 	// Lock some doors dealing with the second pass so the player doesn't run around wrong parts of the level
 	thread lockDoors2();

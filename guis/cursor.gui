@@ -2,7 +2,7 @@ windowDef Desktop
 {
 	rect	0,0,640,480
 	nocursor	1
-	
+
 	onInit {
 		set "crossCombat_16::matcolor_x" "1";
 		set "crossCombat_16::matcolor_y" "1";
@@ -140,155 +140,155 @@ windowDef Desktop
 	}
 
 	windowDef crossCombat
-	{	
+	{
 		rect	0,0,640,480
 		visible	1
 		windowDef crossCombat_16
-		{	
+		{
 			rect	312,232,16,16
 			background	"gui::crossImage"
-			visible	("gui::g_crosshairSize" == 16)	
-			notime 1
-	
+			visible	("gui::g_crosshairSize" == 16)
+			notime	1
+
 			onTime 0 {	
 				transition "rect" "$d_crossCombat_16::rect" "$crossCombat_16::rect" "150";
-					
+				
 				if ("gui::mp" == 0) {
 					set "crossCombat_16::matcolor_x" "1";
 					set "crossCombat_16::matcolor_y" "0";
 					set "crossCombat_16::matcolor_z" "0";
 				}
 			}
-	
+
 			onTime +100 {
 				if ("gui::mp" == 0) {
 					set "crossCombat_16::matcolor" "$gui::crossColor"
 				}
 			}
+
 		}
 		windowDef d_crossCombat_16
 		{
 			rect	307,227,26,26
 			visible	0
 		}
-		
 		windowDef crossCombat_24
-		{	
+		{
 			rect	308,228,24,24
 			background	"gui::crossImage"
-			visible	("gui::g_crosshairSize" == 24)	
-			notime 1
-	
+			visible	("gui::g_crosshairSize" == 24)
+			notime	1
+
 			onTime 0 {	
 				transition "rect" "$d_crossCombat_24::rect" "$crossCombat_24::rect" "150";
-					
+				
 				if ("gui::mp" == 0) {
 					set "crossCombat_24::matcolor_x" "1";
 					set "crossCombat_24::matcolor_y" "0";
 					set "crossCombat_24::matcolor_z" "0";
 				}
 			}
-	
+
 			onTime +100 {
 				if ("gui::mp" == 0) {
 					set "crossCombat_24::matcolor" "$gui::crossColor"
 				}
 			}
+
 		}
 		windowDef d_crossCombat_24
 		{
 			rect	303,223,34,34
 			visible	0
 		}
-		
 		windowDef crossCombat_32
-		{	
+		{
 			rect	304,224,32,32
 			background	"gui::crossImage"
-			visible	("gui::g_crosshairSize" == 32)	
-			notime 1
-	
+			visible	("gui::g_crosshairSize" == 32)
+			notime	1
+
 			onTime 0 {	
 				transition "rect" "$d_crossCombat_32::rect" "$crossCombat_32::rect" "150";
-					
+				
 				if ("gui::mp" == 0) {
 					set "crossCombat_32::matcolor_x" "1";
 					set "crossCombat_32::matcolor_y" "0";
 					set "crossCombat_32::matcolor_z" "0";
 				}
 			}
-	
+
 			onTime +100 {
 				if ("gui::mp" == 0) {
 					set "crossCombat_32::matcolor" "$gui::crossColor"
 				}
 			}
+
 		}
 		windowDef d_crossCombat_32
 		{
 			rect	299,219,42,42
 			visible	0
 		}
-		
 		windowDef crossCombat_40
-		{	
+		{
 			rect	300,220,40,40
 			background	"gui::crossImage"
-			visible	("gui::g_crosshairSize" == 40)	
-			notime 1
-	
+			visible	("gui::g_crosshairSize" == 40)
+			notime	1
+
 			onTime 0 {	
 				transition "rect" "$d_crossCombat_40::rect" "$crossCombat_40::rect" "150";
-					
+				
 				if ("gui::mp" == 0) {
 					set "crossCombat_40::matcolor_x" "1";
 					set "crossCombat_40::matcolor_y" "0";
 					set "crossCombat_40::matcolor_z" "0";
 				}
 			}
-	
+
 			onTime +100 {
 				if ("gui::mp" == 0) {
 					set "crossCombat_40::matcolor" "$gui::crossColor"
 				}
 			}
+
 		}
 		windowDef d_crossCombat_40
 		{
 			rect	295,215,50,50
 			visible	0
-		}	
-		
+		}
 		windowDef crossCombat_48
-		{	
+		{
 			rect	296,216,48,48
 			background	"gui::crossImage"
-			visible	("gui::g_crosshairSize" == 48)	
-			notime 1
-	
+			visible	("gui::g_crosshairSize" == 48)
+			notime	1
+
 			onTime 0 {	
 				transition "rect" "$d_crossCombat_48::rect" "$crossCombat_48::rect" "150";
-					
+				
 				if ("gui::mp" == 0) {
 					set "crossCombat_48::matcolor_x" "1";
 					set "crossCombat_48::matcolor_y" "0";
 					set "crossCombat_48::matcolor_z" "0";
 				}
 			}
-	
+
 			onTime +100 {
 				if ("gui::mp" == 0) {
 					set "crossCombat_48::matcolor" "$gui::crossColor"
 				}
 			}
+
 		}
 		windowDef d_crossCombat_48
 		{
 			rect	291,211,58,58
 			visible	0
-		}			
+		}
 	}
-
 	windowDef crossUsable
 	{
 		rect	308 ,228 ,24 ,24
@@ -300,14 +300,15 @@ windowDef Desktop
 		onTime 0 {
 			transition "rect" "308,228,24,24" "306,226,28,28" "300" ;
 		}
-		
+
 		onTime 300 {
 			transition "rect" "306,226,28,28" "308,228,24,24" "300" ;
 		}
-		
+
 		onTime 600 {
 			resettime "0" ;
 		}
+
 	}
 	windowDef crossTalk
 	{
@@ -459,5 +460,15 @@ windowDef Desktop
 			transition "rect" "300,220,40,40" "303,223,34,34" "200" ; 
 		}
 
+	}
+	windowDef crossOrder
+	{
+		rect	331,222,309,18
+		visible	1
+		forecolor	1,1,1,1
+		text	"gui::order_details"
+		textscale	0.21
+		font	"fonts/marine"
+		textstyle	1
 	}
 }

@@ -442,7 +442,8 @@ public:
 	void					Think( void );
 
 	void					KneadingDoughGame(void);
-	void					BakingMinigame(int starttime);
+	void					ToppingsGame(void);
+	void					BakingMinigame(void);
 
 	// save games
 	void					Save( idSaveGame *savefile ) const;					// archives object for save game file

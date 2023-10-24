@@ -4,6 +4,8 @@ windowDef Desktop
 	visible	1
 	nocursor	1
 	menugui	0
+	)	)
+	/	2
 	definevec4	"ws_on"	1,0.8,0,1
 	definevec4	"ws_off"	0.960,0.584,0.0705,0.6
 	definevec4	"ws_glowon"	0.949,0.678,0.0431,0.6
@@ -18,7 +20,7 @@ windowDef Desktop
 	float	"teamstrogg"	0
 	float	"hidden"	0
 	definefloat	"showGunInfo"	1
-	definefloat	"switchLeft"	(640-((gui::weaponcount*30)-2))/2
+	definefloat	"switchLeft"	(640-((gui::weaponcount*30)-2
 
 	onInit {
 		namedEvent "updateHealth";
@@ -290,6 +292,34 @@ windowDef Desktop
 		set "ViewComments::visible" "0";
 	}
 
+	onNamedEvent hideStars {
+		set "star_1::visible" "0";
+		set "star_2::visible" "0";
+		set "star_3::visible" "0";
+		set "star_4::visible" "0";
+		set "star_5::visible" "0";
+	}
+
+	onNamedEvent firstStar {
+		set "star_1::visible" "1";
+	}
+
+	onNamedEvent secondStar {
+		set "star_2::visible" "1";
+	}
+
+	onNamedEvent thirdStar {
+		set "star_3::visible" "1";
+	}
+
+	onNamedEvent fourthStar {
+		set "star_4::visible" "1";
+	}
+
+	onNamedEvent fifthStar {
+		set "star_5::visible" "1";
+	}
+
 	windowDef ViewComments
 	{
 		rect	2, 5, 638, 200
@@ -315,7 +345,7 @@ windowDef Desktop
 	}
 	windowDef p_ammo
 	{
-		rect	0,0,640,480
+		rect	-1,99,640,480
 		visible	1
 		windowDef ammo_backbar
 		{
@@ -323,14 +353,6 @@ windowDef Desktop
 			visible	1
 			background	"gfx/guis/hud/s_backbar"
 			matcolor	0,0,0,0.5
-			shear	0,.22
-		}
-		windowDef ammo_valbar
-		{
-			rect	10,419,129,67
-			visible	1
-			background	"gfx/guis/hud/s_valbar"
-			matcolor	1,0.564,0,0.2
 			shear	0,.22
 		}
 		windowDef p_ammo_val
@@ -356,7 +378,7 @@ windowDef Desktop
 		}
 		windowDef ammo_amount
 		{
-			rect	69,430,60,26
+			rect	47,435,75,34
 			visible	1
 			forecolor	0.988,1,0.784,1
 			text	"gui::player_ammo"
@@ -395,14 +417,6 @@ windowDef Desktop
 			textscale	0.5
 			font	"fonts/r_strogg"
 			textalign	2
-		}
-		windowDef ammo_static
-		{
-			rect	10,419,129,67
-			visible	1
-			background	"gfx/guis/hud/s_hudstatic"
-			matcolor	0.0862,0.0862,0.0862,1
-			shear	0,.22
 		}
 	}
 	windowDef p_tram
@@ -511,7 +525,7 @@ windowDef Desktop
 	}
 	windowDef p_health
 	{
-		rect	0,0,640,480
+		rect	0,110,640,480
 		visible	1
 		windowDef health_backbar
 		{
@@ -1834,5 +1848,77 @@ windowDef Desktop
 			set "p_exit_level::visible" "0";
 		}
 
+	}
+	windowDef money
+	{
+		rect	47,418,115,53
+		visible	1
+		forecolor	1,1,1,1
+		text	"gui::player_money"
+		textscale	0.7
+		font	"fonts/r_strogg"
+	}
+	windowDef dollar
+	{
+		rect	5,423,40,53
+		visible	1
+		forecolor	1,1,1,1
+		text	"$"
+		textscale	0.7
+		font	"fonts/r_strogg"
+		textalign	2
+	}
+	windowDef star_5
+	{
+		rect	585,422,44,44
+		visible	1
+		background	"gfx/guis/star"
+		matcolor	1,1,1,1
+	}
+	windowDef star_4
+	{
+		rect	537,423,44,43
+		visible	1
+		background	"gfx/guis/star"
+		matcolor	1,1,1,1
+	}
+	windowDef star_1
+	{
+		rect	392,423,44,43
+		visible	1
+		background	"gfx/guis/star"
+		matcolor	1,1,1,1
+	}
+	windowDef star_2
+	{
+		rect	439,423,44,43
+		visible	1
+		background	"gfx/guis/star"
+		matcolor	1,1,1,1
+	}
+	windowDef star_3
+	{
+		rect	487,423,44,43
+		visible	1
+		background	"gfx/guis/star"
+		matcolor	1,1,1,1
+	}
+	windowDef scoring
+	{
+		rect	6,3,115,53
+		visible	1
+		forecolor	1,1,1,1
+		text	"gui::player_score"
+		textscale	0.7
+		font	"fonts/r_strogg"
+	}
+	windowDef tip
+	{
+		rect	22,392,75,33
+		visible	1
+		forecolor	1,1,0.494,1
+		text	"gui::player_tip"
+		textscale	0.5
+		font	"fonts/r_strogg"
 	}
 }

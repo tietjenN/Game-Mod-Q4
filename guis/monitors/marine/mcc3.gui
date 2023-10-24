@@ -77,7 +77,7 @@ windowDef Desktop
 	{
 		rect	208,107,219,219
 		visible	1
-		background	"gfx/guis/monitors/marine/mcc3_biohazard"
+		background	"gfx/guis/tomato_sauce"
 		matcolor	1,1,1,1
 
 		onTime 0 {

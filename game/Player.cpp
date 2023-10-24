@@ -1769,6 +1769,8 @@ void idPlayer::Init( void ) {
 		teamDoublerPending = false;
 		teamDoubler = PlayEffect( "fx_doubler", renderEntity.origin, renderEntity.axis, true );
 	}
+	hud->HandleNamedEvent("hideStars");
+	hud->SetStateInt("player_money", 0);
 }
 
 /*
@@ -9306,7 +9308,7 @@ void idPlayer::Think( void ) {
 	if ( !gameLocal.usercmds ) {
 		return;
 	}
-	//gameLocal.Printf(" %s: %i: GOT HERE", __FILE__, __LINE__);
+	//gameLocal.Printf(" %s: %i: GOT HERE\n", __FILE__, __LINE__);
 
 #ifdef _XENON
 	// change the crosshair if it's modified
@@ -9649,6 +9651,8 @@ void idPlayer::Think( void ) {
 
 	inBuyZonePrev = false;
 
+
+
 	idVec3    start;
 	idVec3    end;
 	trace_t    tr;
@@ -9656,23 +9660,65 @@ void idPlayer::Think( void ) {
 	end = start + viewAngles.ToForward() * 768.0f;
 	gameLocal.TracePoint(this, tr, start, end, MASK_SHOT_BOUNDINGBOX, this);
 	idEntity* thing = gameLocal.entities[tr.c.entityNum];
-	int thingnum = tr.c.entityNum;
-	//gameLocal.Printf("item: %d, ", tr.c.entityNum);
+
 	idUserInterface* hud_ = gameLocal.GetLocalPlayer()->GetHud();
-	//if ((thingnum == 33) && (usercmd.buttons & BUTTON_ATTACK)) {
-		//gameLocal.Printf("detected \n");
-		//gameLocal.Printf("time: %i", gameLocal.GetTime());
-		//thing->SetModel("models / mapobjects / strogg / convoy/mine.lwo");
-	//}
+	//thing->SetModel("models / mapobjects / strogg / convoy/mine.lwo");
 	//const char* pizza = "func_static_53712";
 	const char* ovenControl = "func_static_14470";
 	const char* ovenDoor = "func_static_17544";
 	const char* dough = "moveable_gib_torso_pork_1";
-	idVec3 oven;
-	oven.x = -1264.000000;
-	oven.y = -1184.000000;
-	oven.z = 104.000000;
+	const char* doughButton = "func_static_53728";
+	idVec3 table;
+	table.x = -1496;
+	table.y = -1272;
+	table.z = 104;
 	idAngles angle;
+	idVec3 doughDispenser;
+	doughDispenser.x = -1544;
+	doughDispenser.y = -1328;
+	doughDispenser.z = 168;
+	cursor->HandleNamedEvent("showCrossGui");
+	/*
+	=================
+	Customer Interaction
+	=================
+	*/
+	if ((strcmp(thing->GetName(), "char_marine_unarmed_1") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+		gameLocal.Printf("order taken\n");
+	}
+	/*
+	=================
+	Kneading Dough Setup
+	=================
+	*/
+	if ((strcmp(thing->GetName(), doughButton) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+		if (!inMinigame1) {
+			KneadingDoughGame();
+			const char* key, * value;
+			int			i;
+			float		yaw;
+			idVec3		org;
+			idPlayer* player;
+			idDict		dict;
+
+			yaw = player->viewAngles.yaw;
+
+			dict.Set("classname", "moveable_gib_torso_pork");
+			dict.Set("angle", va("%f", yaw + 180));
+
+			dict.Set("origin", doughDispenser.ToString());
+
+			idEntity* newEnt = NULL;
+			gameLocal.SpawnEntityDef(dict, &newEnt);
+
+			if (!newEnt) {
+				gameLocal.Printf("Failed to spawn\n");
+			}
+		}
+		else {
+			gameLocal.Printf("only work with one at a time\n");
+		}
+	}
 
 	if ((strcmp(thing->GetName(), dough) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
 		if (!inMinigame1) {
@@ -9683,17 +9729,168 @@ void idPlayer::Think( void ) {
 	if (inMinigame1) {
 		if (gameLocal.time >= finishtime) {
 			gameLocal.Printf("clicked %i times. \n", clicks);
+			//TODO: Scoring and points system
+			//TODO: Change appearance of dough at finish
 			inMinigame1 = false;
 		}
 		if ((strcmp(thing->GetName(), dough) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
 			clicks++;
 		}
 	}
+	/*
+	=================
+	Toppings Setup
+	=================
+	*/
+	idDict	dict;
+	if ((strcmp(thing->GetName(), "sauce_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
 
+
+		dict.Set("classname", "moveable_gib_torso_pork");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "bbq_sauce_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_base");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "cheese_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_big_rup_leg_pork");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "mushroom_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_skull");
+		dict.Set("angle", va("%f", -2));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "olives_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_head_pork");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "peppers_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_rup_leg_pork");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "pepperoni_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_big_pelvis_pork");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "pineapple_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_rup_arm_pork");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "sardine_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_pelvis_pork");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	if ((strcmp(thing->GetName(), "sausage_button") == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
+
+
+		dict.Set("classname", "moveable_gib_left_waist_pork");
+		dict.Set("angle", va("%f", 180));
+		dict.Set("origin", table.ToString());
+
+		idEntity* newEnt = NULL;
+		gameLocal.SpawnEntityDef(dict, &newEnt);
+
+		if (!newEnt) {
+			gameLocal.Printf("Failed to spawn\n");
+		}
+	}
+	/*
+	=================
+	Baking Setup
+	=================
+	*/
 	if ((strcmp(thing->GetName(), ovenDoor) == 0) && (usercmd.buttons & BUTTON_ATTACK)) {
-		//thing->Teleport(oven, angle, NULL);
 		if (!inMinigame3) {
-			BakingMinigame(gameLocal.GetTime()); 
+			BakingMinigame(); 
 			finishtime = gameLocal.time + 500;
 		}
 		//thing->GetPhysicsToVisualTransform(idVec3 & origin, idMat3 & axis);
@@ -9722,11 +9919,8 @@ void idPlayer::Think( void ) {
 			gameLocal.GetLocalPlayer()->inventory.armor = 0;
 		}
 	}
-	cursor->HandleNamedEvent("showCrossGui");
 	if (strcmp(thing->GetName(), ovenControl) == 0) {
 		cursor->HandleNamedEvent("showCrossUsable");
-		//cursor->SetStateString("npc", common->GetLocalizedString(newEnt->spawnArgs.GetString("npc_name", "Joe")));
-		//cursor->SetStateString("npcdesc", common->GetLocalizedString(newEnt->spawnArgs.GetString("npc_description", "")));
 	}
 	if (strcmp(thing->GetName(), ovenDoor) == 0) {
 		cursor->HandleNamedEvent("showCrossUsable");
@@ -9736,13 +9930,18 @@ void idPlayer::Think( void ) {
 	}
 }
 void idPlayer::KneadingDoughGame(void) {
-	gameLocal.Printf("started minigame \n");
+	gameLocal.Printf("started kneading \n");
 	clicks = 0;
 	inMinigame1 = true;
 }
 
-void idPlayer::BakingMinigame(int starttime) {
-		gameLocal.Printf("started minigame \n");
+void idPlayer::ToppingsGame(void) {
+	gameLocal.Printf("started applying toppings \n");
+	inMinigame2 = true;
+}
+
+void idPlayer::BakingMinigame(void) {
+		gameLocal.Printf("started baking \n");
 		gameLocal.GetLocalPlayer()->inventory.armor = 10;
 		inMinigame3 = true;
 }

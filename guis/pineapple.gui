@@ -1,0 +1,11 @@
+windowDef Desktop
+{
+	rect	0,0,640,480
+	windowDef unnamed
+	{
+		rect	108,41,429,401
+		visible	1
+		background	"gfx/guis/pineapple"
+		matcolor	1,1,1,1
+	}
+}
